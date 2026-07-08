@@ -1,7 +1,0 @@
-(.venv) PS D:\Antigravity-Projects\El Francotirador del Viento\Aprendizaje_Por_Refuerzo\05-escorpion> python train_scorpion.py
-(.venv) PS D:\Antigravity-Projects\El Francotirador del Viento\Aprendizaje_Por_Refuerzo\05-escorpion>  python server_ui.py
-
- Si en el futuro realmente necesitas "matar" la aplicación anterior que se quedó trabada ocupando el puerto 8000 en Windows, puedes abrir una terminal de PowerShell y usar este comando para forzar el cierre:
-
- Stop-Process -Id (Get-NetTCPConnection -LocalPort 8000).OwningProcess -Force
-

@@ -31,7 +31,8 @@ def main():
         gae_lambda=0.95,
         gamma=0.99,
         device=device_to_use,
-        verbose=1
+        verbose=1,
+        policy_kwargs=dict(net_arch=[256, 256])
     )
 
     print("Iniciando entrenamiento por 500,000 pasos de tiempo...")

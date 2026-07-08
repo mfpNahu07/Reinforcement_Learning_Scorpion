@@ -30,9 +30,9 @@ class ScorpionEnv(gym.Env):
         # Espacio de Acciones: torques limitados entre [-1.0, 1.0]
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,), dtype=np.float32)
 
-        # Espacio de Estados: [sin(t1), cos(t1), sin(t2), cos(t2), target_x, target_y]
-        high = np.array([1.0, 1.0, 1.0, 1.0, 25.0, 25.0], dtype=np.float32)
-        low = np.array([-1.0, -1.0, -1.0, -1.0, -25.0, 0.0], dtype=np.float32)
+        # Espacio de Estados: [sin(t1), cos(t1), sin(t2), cos(t2), omega1, omega2, target_x, target_y]
+        high = np.array([1.0, 1.0, 1.0, 1.0, 5.0, 5.0, 25.0, 25.0], dtype=np.float32)
+        low = np.array([-1.0, -1.0, -1.0, -1.0, -5.0, -5.0, -25.0, 0.0], dtype=np.float32)
         self.observation_space = spaces.Box(low=low, high=high, dtype=np.float32)
 
     def _get_obs(self):
@@ -41,6 +41,8 @@ class ScorpionEnv(gym.Env):
             np.cos(self.theta1),
             np.sin(self.theta2),
             np.cos(self.theta2),
+            self.omega1,
+            self.omega2,
             self.target_x,
             self.target_y
         ], dtype=np.float32)
@@ -98,7 +100,11 @@ class ScorpionEnv(gym.Env):
         costo_energia = 0.01 * (torque1**2 + torque2**2)
         reward -= costo_energia
         
-        # 3. Premio por impacto extremo
+        # 3. Castigo por alta velocidad al acercarse al objetivo (para que aprenda a frenar suavemente)
+        if distancia < 4.0:
+            reward -= 0.5 * (self.omega1**2 + self.omega2**2)
+        
+        # 4. Premio por impacto extremo
         terminated = False
         if distancia < 1.5:
             reward += 10.0
